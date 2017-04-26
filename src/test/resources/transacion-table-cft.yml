@@ -1,0 +1,119 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Description": "Test DynamoDB Table",
+  "Parameters": {
+    "TransactionsTableName": {
+      "Description": "The transactions DynamoDB table name",
+      "Type": "String",
+      "Default" : "test-transactions"
+    },
+    "TransactionsTableIndexWCU": {
+      "Description": "The initial WCU for table and GSI",
+      "Type": "String",
+      "Default" : "10"
+    },
+    "TransactionsTableIndexRCU": {
+      "Description": "The initial RCU for table and GSI",
+      "Type": "String",
+      "Default" : "10"
+    }
+  },
+  "Resources": {
+    "TransactionsDynamoDBTable": {
+      "Type": "AWS::DynamoDB::Table",
+      "Properties": {
+        "AttributeDefinitions": [
+          {
+            "AttributeName": "tranRecId",
+            "AttributeType": "S"
+          },
+          {
+            "AttributeName": "accountNumber",
+            "AttributeType": "S"
+          },
+          {
+            "AttributeName": "transactionDate",
+            "AttributeType": "S"
+          },
+          {
+            "AttributeName": "transactionType",
+            "AttributeType": "S"
+          }
+        ],
+        "GlobalSecondaryIndexes": [
+          {
+            "IndexName": "accountNumber-transactionDate-index",
+            "KeySchema": [
+              {
+                "AttributeName": "accountNumber",
+                "KeyType": "HASH"
+              },
+              {
+                "AttributeName": "transactionDate",
+                "KeyType": "RANGE"
+              }
+            ],
+            "Projection": {
+              "ProjectionType": "ALL"
+            },
+            "ProvisionedThroughput": {
+              "ReadCapacityUnits": {
+                "Ref": "TransactionsTableIndexRCU"
+              },
+              "WriteCapacityUnits": {
+                "Ref": "TransactionsTableIndexWCU"
+              }
+            }
+          },
+          {
+            "IndexName": "accountNum-transactionType-index",
+            "KeySchema": [
+              {
+                "AttributeName": "accountNumber",
+                "KeyType": "HASH"
+              },
+              {
+                "AttributeName": "transactionType",
+                "KeyType": "RANGE"
+              }
+            ],
+            "Projection": {
+              "ProjectionType": "ALL"
+            },
+            "ProvisionedThroughput": {
+              "ReadCapacityUnits": {
+                "Ref": "TransactionsTableIndexRCU"
+              },
+              "WriteCapacityUnits": {
+                "Ref": "TransactionsTableIndexWCU"
+              }
+            }
+          }
+        ],
+        "KeySchema": [
+          {
+            "AttributeName": "tranRecId",
+            "KeyType": "HASH"
+          }
+        ],
+        "ProvisionedThroughput": {
+          "ReadCapacityUnits": {
+            "Ref": "TransactionsTableIndexRCU"
+          },
+          "WriteCapacityUnits": {
+            "Ref": "TransactionsTableIndexWCU"
+          }
+        },
+        "TableName": {
+          "Ref": "TransactionsTableName"
+        }
+      }
+    }
+  },
+  "Outputs": {
+    "TransactionsDynamoDBTable": {
+      "Description": "The DynamoDB table that will store raw transactions",
+      "Value": {"Ref": "TransactionsDynamoDBTable" }
+    }
+  }
+}
