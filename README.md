@@ -4,6 +4,9 @@ Test to demo DynamoDB queryPage API filter issue
 
 # Test
 
+Query DynamoDB transaction table using GSI to retrieve 5 transactions matching the given filter criteria
+
+
 - Run JUnit test `com.bank.transactions.QueryFilterTest` that will bootstrap AWS DynamoDB table (table creation and loading test data).
 
 - DynamoDB table is create as per Cloud Formation template `src/test/resources/transacion-table-cft.yml`
